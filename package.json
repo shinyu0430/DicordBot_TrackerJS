@@ -1,0 +1,27 @@
+{
+  "name": "dicordbot_trackerjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shinyu0430/DicordBot_TrackerJS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shinyu0430/DicordBot_TrackerJS/issues"
+  },
+  "homepage": "https://github.com/shinyu0430/DicordBot_TrackerJS#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.26.0",
+    "crypto-js": "^4.1.1",
+    "discord.js": "^13.16.0",
+    "dotenv": "^16.3.1"
+  }
+}
