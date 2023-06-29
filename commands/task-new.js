@@ -1,6 +1,6 @@
 const supabase = require("@supabase/supabase-js");
 const sha256 = require("crypto-js/sha256");
-const listTask = require("../lib/list-task");
+const listTask = require("../lib/showTaskList");
 
 module.exports = {
   name: "!task-new",
@@ -36,7 +36,7 @@ module.exports = {
         created_at: formattedDate,
       });
     }
-    
+
     // insert
     await client.from("tasks").insert(insertData);
 

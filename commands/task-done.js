@@ -1,6 +1,6 @@
 const supabase = require("@supabase/supabase-js");
 const sha256 = require("crypto-js/sha256");
-const listTask = require("../lib/list-task");
+const listTask = require("../lib/showTaskList");
 const getList = require("../utils/getList");
 
 module.exports = {
