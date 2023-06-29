@@ -6,8 +6,17 @@
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications) and register your bot.
 2. Don't forget to checkout your permissions in `Bot/Privileged Gateway Intents` if you needed
-3. Paste your `TOKEN` in `Bot/` into `.env_template`
-4. Invite the bot into your server via `OAuth2/URL Generator`
+3. 
+In Windows:
+```
+copy .env_template .env
+```
+In Linux/Mac:
+```
+cp .env_template .env
+```
+4. Paste your `TOKEN` in `Bot/` into `.env`
+5. Invite the bot into your server via `OAuth2/URL Generator`
 
 ## Supabase - Table definition
 
@@ -51,13 +60,9 @@ Currently change at 2023/6/29 15:33 UTF+8
      ) tablespace pg_default;
    ```
 
-2. Paste your `supabase url` and `supabase api key` into `.env_template`
+2. Paste your `supabase url` and `supabase api key` into `.env`
 
 ## Usage
-
-### Before Run
-
-Make sure your `.env_template` is renamed to `.env`.
 
 ### Run the app
 
