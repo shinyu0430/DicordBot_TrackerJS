@@ -6,7 +6,7 @@
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications) and register your bot.
 2. Don't forget to checkout your permissions in `Bot/Privileged Gateway Intents` if you needed
-3. Copy .env_template as .env
+3. Copy .env_template as .env <br>
 In Windows:
 ```
 copy .env_template .env
@@ -63,7 +63,11 @@ Currently change at 2023/6/29 15:33 UTF+8
 2. Paste your `supabase url` and `supabase api key` into `.env`
 
 ## Usage
+### Install package
 
+```
+npm install
+```
 ### Run the app
 
 ```
