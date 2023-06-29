@@ -10,20 +10,26 @@ module.exports = {
 			process.env.SUPABASE_KEY
 		);
 
+		// hash ids
 		const hashID = sha256(msg.author.id).toString();
-		let doneData = [];
+		const hashGID = sha256(msg.guild.id).toString();
 
+		// parse data
+		let doneData = [];
 		const parsedMsg = msg.content.split("\n");
 		for (let i = 1; i < parsedMsg.length; i++) {
 			doneData.push(parsedMsg[i]);
 		}
 
+		// update
 		await client
 			.from("tasks")
 			.update({ done: false })
-			.eq("user_id", hashID)
+			.match({ guild_id: hashGID, user_id, hashID})
 			.in("task_name", doneData);
-		let out = await listTask.execute(hashID);
+
+		// display
+		let out = await listTask.execute(hashGID, hashID);
 		await msg.reply(out);
 	},
 };

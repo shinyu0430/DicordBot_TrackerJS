@@ -4,8 +4,12 @@ const listTask = require("../lib/list-task");
 module.exports = {
 	name: "!task-list",
 	async execute(msg) {
+		// hash
 		const hashID = sha256(msg.author.id).toString();
-		let out = await listTask.execute(hashID);
+		const hashGID = sha256(msg.guild.id).toString();
+
+		// call display function
+		let out = await listTask.execute(hashGID, hashID);
 		await msg.reply(out);
 	},
 };
