@@ -1,5 +1,5 @@
 const sha256 = require("crypto-js/sha256");
-const listTask = require("../lib/list-task");
+const listTask = require("../lib/showTaskList");
 
 module.exports = {
 	name: "!task-list",
