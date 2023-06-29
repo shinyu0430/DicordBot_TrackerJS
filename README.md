@@ -6,7 +6,7 @@
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications) and register your bot.
 2. Don't forget to checkout your permissions in `Bot/Privileged Gateway Intents` if you needed
-3. 
+3. Copy .env_template as .env
 In Windows:
 ```
 copy .env_template .env
