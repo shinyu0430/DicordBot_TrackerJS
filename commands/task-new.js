@@ -3,22 +3,32 @@ const sha256 = require("crypto-js/sha256");
 const listTask = require("../lib/list-task");
 
 module.exports = {
-	name: "!task-new",
-	async execute(msg) {
-		const client = supabase.createClient(
-			process.env.SUPABASE_URL,
-			process.env.SUPABASE_KEY
-		);
+  name: "!task-new",
+  async execute(msg) {
+    const client = supabase.createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_KEY
+    );
 
-		const hashID = sha256(msg.author.id).toString();
-		let insertData = [];
+		// hash
+    const hashID = sha256(msg.author.id).toString();
+    const hashGID = sha256(msg.guild.id).toString();
 
-		const parsedMsg = msg.content.split("\n");
-		for (let i = 1; i < parsedMsg.length; i++)
-			insertData.push({ user_id: hashID, task_name: parsedMsg[i] });
+		// parse
+    let insertData = [];
+    const parsedMsg = msg.content.split("\n");
+    for (let i = 1; i < parsedMsg.length; i++)
+      insertData.push({
+        guild_id: hashGID,
+        user_id: hashID,
+        task_name: parsedMsg[i],
+      });
 
-		await client.from("tasks").insert(insertData);
-		let out = await listTask.execute(hashID);
-		await msg.reply(out);
-	},
+		// insert
+    await client.from("tasks").insert(insertData);
+
+		// display
+    let out = await listTask.execute(hashGID, hashID);
+    await msg.reply(out);
+  },
 };
