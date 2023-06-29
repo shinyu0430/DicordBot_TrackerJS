@@ -17,30 +17,29 @@ module.exports = {
     // parse
     let insertData = [];
     const parsedMsg = msg.content.split("\n");
-
+    const date = new Date();
     for (let i = 1; i < parsedMsg.length; i++) {
-      const date = new Date();
-
       // Increase the seconds of the date by the index value
       date.setSeconds(date.getSeconds() + i);
 
       // Convert the date to a string formatted as YYYY-MM-DD HH:MI:SS
-      const formattedDate = date
+      const formattedDate = `${date
         .toISOString()
         .replace("T", " ")
-        .replace(/\.\d+Z$/, "");
-      console.log(formattedDate);
+        .replace(/\.\d+Z$/, "")}`;
+
+      const [guild_id, user_id] = [hashGID, hashID];
       insertData.push({
-        guild_id: hashGID,
-        user_id: hashID,
+        guild_id,
+        user_id,
         task_name: parsedMsg[i],
         created_at: formattedDate,
       });
     }
-
+    
     // insert
-    const { data, err } = await client.from("tasks").insert(insertData);
-    console.log(err);
+    await client.from("tasks").insert(insertData);
+
     // display
     let out = await listTask.execute(hashGID, hashID);
     await msg.reply(out);

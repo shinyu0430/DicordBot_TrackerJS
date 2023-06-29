@@ -1,6 +1,7 @@
 const supabase = require("@supabase/supabase-js");
 const sha256 = require("crypto-js/sha256");
 const listTask = require("../lib/list-task");
+const getList = require("../utils/getList");
 
 module.exports = {
   name: "!task-done",
@@ -9,7 +10,6 @@ module.exports = {
       process.env.SUPABASE_URL,
       process.env.SUPABASE_KEY
     );
-
     // hash
     const hashID = sha256(msg.author.id).toString();
     const hashGID = sha256(msg.guild.id).toString();
@@ -18,16 +18,21 @@ module.exports = {
     const doneIdx = msg.content.split(" ").slice(1);
 
     // fetch
-    const { data, _ } = await client
-      .from("tasks")
-      .select("id")
-      .match({ guild_id: hashGID, user_id: hashID })
-      .order("created_at", { ascending: true });
+    const data = await getList.execute(hashGID, hashID);
+    if (!data) {
+      await msg.reply("There is no task to undone:thinking:!");
+      return;
+    }
 
     // add into doneData
     let doneIDs = [];
-    for (let i = 0; i < doneIdx.length; i++)
-      doneIDs.push(data[doneIdx[i] - 1]["id"]);
+    try{
+      doneIDs = doneIdx.map((idx) => data[idx - 1]["id"]);
+    }catch(err){
+      await msg.reply("Please enter valid index:sob:!");
+      return;
+    }
+    
 
     // update
     await client
@@ -37,7 +42,7 @@ module.exports = {
       .in("id", doneIDs);
 
     // display
-    let out = await listTask.execute(hashGID, hashID);
+    const out = await listTask.execute(hashGID, hashID);
     await msg.reply(out);
   },
 };

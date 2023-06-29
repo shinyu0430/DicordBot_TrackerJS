@@ -1,6 +1,8 @@
 const supabase = require("@supabase/supabase-js");
 const sha256 = require("crypto-js/sha256");
 const listTask = require("../lib/list-task");
+const getList = require("../utils/getList");
+
 
 module.exports = {
   name: "!task-undone",
@@ -10,24 +12,25 @@ module.exports = {
       process.env.SUPABASE_KEY
     );
 
-    // hash ids
-    const hashID = sha256(msg.author.id).toString();
+    // hash
     const hashGID = sha256(msg.guild.id).toString();
+    const hashID = sha256(msg.author.id).toString();
 
     // parse data
     const undoneIdx = msg.content.split(" ").slice(1);
 
     // fetch
-    const { data, _ } = await client
-      .from("tasks")
-      .select("id")
-      .match({ guild_id: hashGID, user_id: hashID })
-      .order("created_at", { ascending: true });
+    const data = await getList.execute(hashGID, hashID);
+    if (!data) await msg.reply("There is no task to undone:thinking:!");
 
     // add into doneData
     let doneIDs = [];
-    for (let i = 0; i < undoneIdx.length; i++)
-      doneIDs.push(data[undoneIdx[i] - 1]["id"]);
+    try{
+      doneIDs = undoneIdx.map((index) => data[index - 1]["id"]);
+    }catch{
+      await msg.reply("Please enter valid index:sob:!");
+      return;
+    }
 
     // update
     await client

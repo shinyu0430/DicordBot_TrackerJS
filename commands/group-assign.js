@@ -22,12 +22,13 @@ module.exports = {
       .from("group")
       .select("user_id")
       .match({ group_name: group, guild_id: hashGID });
+
     if (data === null || data.length === 0) {
       await msg.reply(`There's no member in ${group}`);
       return;
     }
-    let ids = [];
-    for (let i = 0; i < data.length; i++) ids.push(data[i]["user_id"]);
+
+    const ids = data.map((item) => item.user_id);
 
     // parse tasks
     const tasks = parsedLine.slice(1);
@@ -42,7 +43,6 @@ module.exports = {
 
     // insert into tasks table
     await client.from("tasks").insert(insertData);
-
     await msg.reply(`Assined tasks to ${group}`);
   },
 };
