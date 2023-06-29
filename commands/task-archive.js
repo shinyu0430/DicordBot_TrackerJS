@@ -13,10 +13,8 @@ module.exports = {
     const hashID = sha256(msg.author.id).toString();
     const hashGID = sha256(msg.guild.id).toString();
 
-		// get tasks
-    let archiveTasks = [];
-    const parsedMsg = msg.content.split("\n");
-    for (let i = 1; i < parsedMsg.length; i++) archiveTasks.push(parsedMsg[i]);
+    // get tasks
+    const archiveTasks = msg.content.split("\n").slice(1);
 
     // fetch data
     const { data, _ } = await client
