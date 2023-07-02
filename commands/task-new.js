@@ -26,9 +26,8 @@ module.exports = {
       const formattedDate = `${date
         .toISOString()
         .replace("T", " ")
-        .replace(/\.\d+Z$/, "")}`;
+        .replace(/\.\d+Z$/, "");
 
-      const [guild_id, user_id] = [hashGID, hashID];
       insertData.push({
         guild_id,
         user_id,

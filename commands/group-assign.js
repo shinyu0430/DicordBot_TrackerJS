@@ -12,26 +12,89 @@ module.exports = {
     // parse command
     const parsedLine = msg.content.split("\n");
     const cmd = parsedLine[0];
-    const group = cmd.split(" ")[1];
+    const groupName = cmd.split(" ")[1];
+    const tasks = parsedLine.slice(1);
+
+    // check users' input
+    if (!tasks.length) {
+      msg.reply("Please enter valid task!");
+      return;
+    }
 
     // hash
     const hashGID = sha256(msg.guild.id).toString();
 
-    // fetch user_ids
-    const { data, _ } = await client
-      .from("group")
-      .select("user_id")
-      .match({ group_name: group, guild_id: hashGID });
+    /**
+     * Check if a guild group exists.
+     * @returns {Object} - An object containing the guild group data.
+     *   - isGroupExist {boolean}: Whether the group exists.
+     *   - groupId {string}: The group id.
+     */
+    async function checkGuildGroup(guildId, groupName) {
+      try {
+        const { data } = await client
+          .from("group")
+          .select("group_name, id, guild_group!inner(guild_id)")
+          .eq("group_name", groupName);
 
-    if (data === null || data.length === 0) {
-      await msg.reply(`There's no member in ${group}`);
-      return;
+        if (data.length) {
+          return { isGroupExist: true, groupId: data[0].id };
+        } else {
+          return { isGroupExist: false, groupId: "" };
+        }
+      } catch (error) {
+        console.log("Error while checking guild group:", error.message);
+      }
     }
 
-    const ids = data.map((item) => item.user_id);
+    /**
+     * Retrieves users in a specific group.
+     *  @returns {Promise<{ data: any }>} - A promise that resolves with an object containing the user data.
+     */
+    async function getUsersInGroup(groupId) {
+      try {
+        const { data } = await client
+          .from("group_user")
+          .select("*")
+          .eq("group_id", groupId);
+        return { data };
+      } catch (error) {
+        console.log("Error while getting users in group", error.message);
+      }
+    }
+
+    /**
+     * Retrieves the user IDs in a specific group.
+     * @returns {Array<string>} - An array of user IDs in the group.
+     */
+    async function getUserIdInGroup(hashGID, groupName) {
+      try {
+        const { isGroupExist, groupId } = await checkGuildGroup(
+          hashGID,
+          groupName
+        );
+        if (isGroupExist) {
+          const { data } = await getUsersInGroup(groupId);
+          const usersId = data.map((item) => {
+            return item.user_id;
+          });
+          return usersId;
+        } else {
+          if(groupName){
+            await msg.reply(`There's no ${groupName}!`);
+          }else{
+            await msg.reply("Please enter valid group name!");
+          }
+          return;
+        }
+      } catch (error) {
+        console.log("Error while getting user ids:", error.message);
+      }
+    }
 
     // parse tasks
-    const tasks = parsedLine.slice(1);
+    const ids = await getUserIdInGroup(hashGID, groupName);
+    console.log(ids)
     let insertData = [];
     for (let i = 0; i < ids.length; i++)
       for (let j = 0; j < tasks.length; j++)
@@ -42,7 +105,12 @@ module.exports = {
         });
 
     // insert into tasks table
-    await client.from("tasks").insert(insertData);
-    await msg.reply(`Assined tasks to ${group}`);
+    const { _, error } = await client.from("tasks").insert(insertData);
+    if (error) {
+      console.log("Error while inserting tasks", error.message);
+      return;
+    } else {
+      await msg.reply(`Assined tasks to ${groupName} successfully!`);
+    }
   },
 };
