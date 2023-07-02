@@ -40,15 +40,6 @@ Currently change at 2023/6/29 15:33 UTF+8
        constraint archived_pkey primary key (id)
      ) tablespace pg_default;
    create table
-     public.group (
-       id uuid not null default gen_random_uuid (),
-       group_name text null default ''::text,
-       user_id text null default ''::text,
-       join_at timestamp with time zone null default now(),
-       guild_id text null default ''::text,
-       constraint group_pkey primary key (id)
-     ) tablespace pg_default;
-   create table
      public.tasks (
        id uuid not null default gen_random_uuid (),
        user_id text null default ''::text,
@@ -58,7 +49,30 @@ Currently change at 2023/6/29 15:33 UTF+8
        guild_id text null default ''::text,
        constraint tasks_pkey primary key (id)
      ) tablespace pg_default;
+    create table
+    public.group (
+      id uuid not null default gen_random_uuid (),
+      group_name text null default ''::text,
+      constraint group_pkey primary key (id)
+    ) tablespace pg_default;
+    create table
+    public.group_user (
+      joined_at timestamp with time zone null default (now() at time zone 'utc+8'::text),
+      user_id text not null,
+      group_id uuid not null,
+      constraint group_user_pkey primary key (group_id, user_id),
+      constraint group_user_group_id_fkey foreign key (group_id) references "group" (id) on delete cascade
+    ) tablespace pg_default;
+    create table
+    public.guild_group (
+      id uuid not null default gen_random_uuid (),
+      guild_id text null,
+      group_id uuid null,
+      constraint guild_group_pkey primary key (id),
+      constraint guild_group_group_id_fkey foreign key (group_id) references "group" (id) on delete cascade
+    ) tablespace pg_default;
    ```
+
 
 2. Paste your `supabase url` and `supabase api key` into `.env`
 

@@ -9,7 +9,7 @@ module.exports = {
 		const hashGID = sha256(msg.guild.id).toString();
 
 		// call display function
-		let out = await listTask.execute(hashGID, hashID);
+		const out = await listTask.execute(hashGID, hashID);
 		await msg.reply(out);
 	},
 };
