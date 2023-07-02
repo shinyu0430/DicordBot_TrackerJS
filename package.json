@@ -20,6 +20,7 @@
   "homepage": "https://github.com/shinyu0430/DicordBot_TrackerJS#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.26.0",
+    "cron": "^2.3.1",
     "crypto-js": "^4.1.1",
     "discord.js": "^13.16.0",
     "dotenv": "^16.3.1"

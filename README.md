@@ -129,9 +129,3 @@ npm run start
 ...
 ```
 
-**Archive: You CANNOT unarchived, use this command carefully**
-
-```
-!task-archive <index-1> <index-2>...
-...
-```
