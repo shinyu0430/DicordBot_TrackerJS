@@ -26,11 +26,11 @@ module.exports = {
       const formattedDate = `${date
         .toISOString()
         .replace("T", " ")
-        .replace(/\.\d+Z$/, "");
+        .replace(/\.\d+Z$/, "")}`;
 
       insertData.push({
-        guild_id,
-        user_id,
+        guild_id: hashGID,
+        user_id: hashID,
         task_name: parsedMsg[i],
         created_at: formattedDate,
       });
