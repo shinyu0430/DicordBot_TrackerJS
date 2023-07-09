@@ -134,6 +134,7 @@ npm run start
 ### Task: Record the completion of weekly tasks.
 
 **New**
+
 ![](https://imgur.com/fZ4C3I4l.gif)
 ```
 !task-new
@@ -143,6 +144,7 @@ npm run start
 ```
 
 **Done**
+
 ![](https://imgur.com/7dciWwJl.gif)
 ```
 !task-done <index-1> <index-2>...
@@ -166,14 +168,16 @@ npm run start
 
 ### Track: Track daily submission records on LeetCode.
 **Setting leetcode daily tracking**
-Start tracking. Default notifications will be sent to the text channel where you issued the command. Provide a channel ID to choose a different text channel for notifications.
-```
-!track-setting on <Channel id(optional)>
-```
-Stop tracking.
-```
-!track-setting off
-```
+- Start tracking:
+
+  Default notifications will be sent to the text channel where you issued the command. Provide a channel ID to choose a different text channel for notifications.
+  ```
+  !track-setting on <Channel id(optional)>
+  ```
+- Stop tracking
+  ```
+  !track-setting off
+  ```
 
 **Join leetcode daily tracking**
 ```
