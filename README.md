@@ -39,6 +39,7 @@ Currently change at 2023/6/29 15:33 UTF+8
        guild_id text null default ''::text,
        constraint archived_pkey primary key (id)
      ) tablespace pg_default;
+
    create table
      public.tasks (
        id uuid not null default gen_random_uuid (),
@@ -49,12 +50,14 @@ Currently change at 2023/6/29 15:33 UTF+8
        guild_id text null default ''::text,
        constraint tasks_pkey primary key (id)
      ) tablespace pg_default;
+
     create table
     public.group (
       id uuid not null default gen_random_uuid (),
       group_name text null default ''::text,
       constraint group_pkey primary key (id)
     ) tablespace pg_default;
+
     create table
     public.group_user (
       joined_at timestamp with time zone null default (now() at time zone 'utc+8'::text),
@@ -70,6 +73,21 @@ Currently change at 2023/6/29 15:33 UTF+8
       group_id uuid null,
       constraint guild_group_pkey primary key (id),
       constraint guild_group_group_id_fkey foreign key (group_id) references "group" (id) on delete cascade
+    ) tablespace pg_default;
+
+    create table
+    public.track (
+      guild_id text not null,
+      execute boolean not null,
+      channel_id text null,
+      constraint track_pkey primary key (guild_id)
+    ) tablespace pg_default;
+
+    create table
+    public.track_user (
+      guild_id text not null,
+      account_id text not null,
+      constraint track_user_pkey primary key (guild_id, account_id)
     ) tablespace pg_default;
    ```
 
@@ -88,7 +106,9 @@ npm install
 npm run start
 ```
 
-### Group
+## Discord Command
+
+### Group: To assign tasks on a group basis.
 
 **Join the group**
 
@@ -111,10 +131,11 @@ npm run start
 ...
 ```
 
-### Task
+### Task: Record the completion of weekly tasks.
 
 **New**
 
+![](https://imgur.com/fZ4C3I4l.gif)
 ```
 !task-new
 <task1>
@@ -122,15 +143,9 @@ npm run start
 ...
 ```
 
-**Delete**
-
-```
-!task-del <index-1> <index-2>...
-...
-```
-
 **Done**
 
+![](https://imgur.com/7dciWwJl.gif)
 ```
 !task-done <index-1> <index-2>...
 ...
@@ -143,3 +158,39 @@ npm run start
 ...
 ```
 
+**Delete**
+
+```
+!task-del <index-1> <index-2>...
+...
+```
+
+
+### Track: Track daily submission records on LeetCode.
+**Setting leetcode daily tracking**
+- Start tracking:
+
+  Default notifications will be sent to the text channel where you issued the command. Provide a channel ID to choose a different text channel for notifications.
+  ```
+  !track-setting on <Channel id(optional)>
+  ```
+- Stop tracking
+  ```
+  !track-setting off
+  ```
+
+**Join leetcode daily tracking**
+```
+!track-join <Leetcode id>
+```
+**Leave leetcode daily tracking**
+
+```
+!track-leave <Leetcode id>
+```
+
+### Other
+Provide command reminders when you forget it.
+```
+!help
+```

@@ -1,8 +1,10 @@
 const { Client, Intents, Collection } = require("discord.js");
 const fs = require("fs");
 const dotenv = require("dotenv");
-const archiveRoutine = require("./utils/archiveRoutine");
+const archiveRoutine = require("./utils/archiveRoutine.js");
+const trackRoutine = require("./utils/trackRoutine.js");
 const express = require("express");
+const client = require("./utils/client.js");
 
 // make a endpoint to ping
 const app = express();
@@ -17,19 +19,20 @@ dotenv.config();
 // command prefix
 const PREFIX = "!";
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.MESSAGE_CONTENT,
-  ],
-});
+// const client = new Client({
+//   intents: [
+//     Intents.FLAGS.GUILDS,
+//     Intents.FLAGS.GUILD_MESSAGES,
+//     Intents.FLAGS.MESSAGE_CONTENT,
+//   ],
+// });
 
 // when it get ready
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
   client.user.setActivity("LeetCode");
   archiveRoutine.execute();
+  trackRoutine.execute();
 });
 
 // read the directory ./commands for all .js files
