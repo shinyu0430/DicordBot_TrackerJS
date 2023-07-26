@@ -4,7 +4,7 @@ const archive = require("./archive");
 
 // cron, do the archive task
 const archive_tasks = new cron.CronJob(
-	"0 0 0 * * 0", // do every Sunday
+	"0 0 16 * * 0", // do every Sunday
 	() => {
 		console.log("Archive");
 		archive.execute();
