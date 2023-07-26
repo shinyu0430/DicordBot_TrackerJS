@@ -3,7 +3,7 @@ const track = require("./track");
 
 // cron, do the archive task
 const track_tasks = new cron.CronJob(
-    "00 22 * * *",
+    "0 14 * * *",
     () => {
       console.log("Track");
       track.execute();

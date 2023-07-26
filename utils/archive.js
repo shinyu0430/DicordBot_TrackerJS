@@ -65,7 +65,8 @@ module.exports = {
 		const { delete_error } = await client
 			.from("tasks")
 			.delete()
-			.in("done", [true, false]);
+      .in("done", [true]);
+			// .in("done", [true, false]);
 		if (delete_error) {
 			const error_date = new Date();
 			const year = error_date.getFullYear(),

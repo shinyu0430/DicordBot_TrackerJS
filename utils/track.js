@@ -3,6 +3,8 @@ const axios = require("axios");
 const { DateTime } = require("luxon");
 const bot = require("./client.js");
 const Discord = require("discord.js");
+const moment = require("moment");
+require("moment-timezone");
 
 const url = "https://leetcode.com/graphql";
 
@@ -48,9 +50,7 @@ module.exports = {
     const formattedData = await fetchUserInfo();
 
     async function fetchUserInfo() {
-      const response = await client
-        .from("track_user")
-        .select("guild_id, account_id");
+      const response = await client.from("track_user").select("guild_id, account_id");
 
       if (response.error) {
         console.error("Error fetching data:", response.error.message);
@@ -94,11 +94,13 @@ module.exports = {
 
       return formattedData;
     }
-
+    
     async function getRecentSubmissions(channelId, users) {
-      const todayDate = DateTime.local().toFormat("yyyy-MM-dd");
+      const todayDate = moment().tz("Asia/Taipei").format("YYYY-MM-DD");
+      console.log(todayDate)
       result = `# ${todayDate}\n`;
       for (const user of users) {
+        console.log(user)
         payload.variables.username = user;
 
         try {
@@ -107,18 +109,18 @@ module.exports = {
           if (response.status === 200) {
             const data = response.data;
             const recentSubmissions = data.data.recentSubmissionList;
-
-            const today = DateTime.local().set({
-              hour: 0,
-              minute: 0,
-              second: 0,
-              millisecond: 0,
-            });
-
-            const todaySubmissions = filterTodaySubmissions(
-              recentSubmissions,
-              today
-            );
+            const today = moment.tz(new Date(), "Asia/Taipei");
+            // today.set({
+            //   hour: 0,
+            //   minute: 0,
+            //   second: 0,
+            //   millisecond: 0,
+            // });
+            today.subtract(2, 'hours');
+            today.startOf('day');
+            
+            // console.log("=====todaysubmission======")
+            const todaySubmissions = filterTodaySubmissions(recentSubmissions, today);
             let userResult = formatUserResult(user, todaySubmissions);
 
             result += userResult + "\n";
@@ -142,25 +144,19 @@ module.exports = {
 };
 
 function filterTodaySubmissions(submissions, today) {
-  if(!submissions)  
-    return [];
-  return submissions.filter(
-    (sub) => DateTime.fromSeconds(parseInt(sub.timestamp)) >= today
-  );
+  if (!submissions) return [];
+  return submissions.filter((sub) => DateTime.fromSeconds(parseInt(sub.timestamp)) >= today);
 }
 
 function formatUserResult(user, submissions) {
-  let userResult = `## :hatching_chick: ${user}\n`;
+  let userResult = `## :bear: ${user}\n`;
   let acCount = 0;
   const checkedTitles = new Set();
   submissions.forEach((submission) => {
     const { title, timestamp, statusDisplay } = submission;
-    const date = new Date(timestamp * 1000);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const formattedTime = `${hours}:${minutes}`;
-    const emoji =
-      statusDisplay === "Accepted" ? ":green_heart:" : ":broken_heart:";
+    const date = moment.unix(timestamp).tz("Asia/Taipei");
+    const formattedTime = date.format("HH:mm");
+    const emoji = statusDisplay === "Accepted" ? ":green_heart:" : ":broken_heart:";
     const submissionStr = `- ${title} ${formattedTime} ${statusDisplay} ${emoji}`;
     userResult += submissionStr + "\n";
 
@@ -183,9 +179,7 @@ function sendToChannel(channelId, message) {
         console.log(`Message sent to channel ${channelId}: ${message}`);
       })
       .catch((error) => {
-        console.error(
-          `Error sending message to channel ${channelId}: ${error}`
-        );
+        console.error(`Error sending message to channel ${channelId}: ${error}`);
       });
   } else {
     console.error(`Channel ${channelId} not found or not a text channel.`);
